@@ -1,0 +1,25 @@
+{
+    "name": "space/module-product-purchase-count",
+    "description": "Product Purchase Count Magento 2 extension.",
+    "type": "magento2-module",
+    "license": [
+        "MIT"
+    ],
+    "config": {
+        "sort-packages": true
+    },
+    "version": "1.0.0",
+    "require": {
+        "php": "~8.1.0||~8.2.0||~8.3.0",
+        "magento/framework": "103.0.*"
+    },
+    "autoload": {
+        "files": [
+            "registration.php"
+        ],
+        "psr-4": {
+            "Space\\ProductPurchaseCount\\": ""
+        }
+    }
+}
+
