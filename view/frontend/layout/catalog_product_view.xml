@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright (c) 2024 Attila Sagi
+ * @license http://www.opensource.org/licenses/mit-license.html  MIT License
+ */
+-->
+<page layout="1column" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <body>
+        <referenceContainer name="content">
+            <block name="space.product.purchase.count"
+                template="Space_ProductPurchaseCount::catalog/view/product-purchase-count.phtml"
+                before="-">
+                <arguments>
+                    <argument name="view_model" xsi:type="object">
+                        Space\ProductPurchaseCount\ViewModel\Catalog\View\Count
+                    </argument>
+                </arguments>
+            </block>
+        </referenceContainer>
+    </body>
+</page>
