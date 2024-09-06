@@ -7,5 +7,10 @@
 -->
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:noNamespaceSchemaLocation="urn:magento:framework:Module/etc/module.xsd">
-    <module name="Space_ProductPurchaseCount" />
+    <module name="Space_ProductPurchaseCount">
+        <sequence>
+            <module name="Magento_Catalog"/>
+            <module name="Magento_Sales"/>
+        </sequence>
+    </module>
 </config>
