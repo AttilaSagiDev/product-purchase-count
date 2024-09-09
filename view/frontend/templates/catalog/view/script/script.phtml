@@ -1,0 +1,25 @@
+<?php
+/**
+ * Copyright (c) 2024 Attila Sagi
+ * @license http://www.opensource.org/licenses/mit-license.html  MIT License
+ */
+
+/**
+ * @var $block \Magento\Framework\View\Element\Template
+ * @var $escaper \Magento\Framework\Escaper
+ * @var $viewModel \Space\ProductPurchaseCount\ViewModel\Catalog\View\Count
+ */
+?>
+<script type="text/x-magento-init">
+    {
+        "*": {
+            "Magento_Ui/js/core/app": {
+                "components": {
+                    "productPurchaseCount": {
+                        "component": "Space_ProductPurchaseCount/js/product-purchase-count"
+                    }
+                }
+            }
+        }
+    }
+</script>
