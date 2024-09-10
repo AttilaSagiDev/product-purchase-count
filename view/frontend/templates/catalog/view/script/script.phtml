@@ -9,17 +9,24 @@
  * @var $escaper \Magento\Framework\Escaper
  * @var $viewModel \Space\ProductPurchaseCount\ViewModel\Catalog\View\Count
  */
+
+$viewModel = $block->getData('view_model');
 ?>
-<script type="text/x-magento-init">
-    {
-        "*": {
-            "Magento_Ui/js/core/app": {
-                "components": {
-                    "productPurchaseCount": {
-                        "component": "Space_ProductPurchaseCount/js/product-purchase-count"
+<?php if (null !== $viewModel): ?>
+    <script type="text/x-magento-init">
+        {
+            "*": {
+                "Magento_Ui/js/core/app": {
+                    "components": {
+                        "productPurchaseCount": {
+                            "component": "Space_ProductPurchaseCount/js/product-purchase-count",
+                            "selectorId": "#product-purchase-count",
+                            "productId": "<?= $escaper->escapeHtml($viewModel->getProductId()) ?>",
+                            "storeCode": "<?= $escaper->escapeHtml($viewModel->getStoreCode())?>"
                     }
                 }
             }
         }
     }
-</script>
+    </script>
+<?php endif; ?>

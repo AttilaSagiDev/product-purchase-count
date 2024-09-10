@@ -22,8 +22,13 @@ define([
          * @private
          */
         _create: function () {
-            const serviceUrl = urlBuilder.build('/rest/default/V1/productPurchaseCount/2');
-            this._callApi(serviceUrl);
+            const productId = this.options.productId || null;
+            const storeCode = this.options.storeCode || null;
+
+            if (productId && storeCode) {
+                const serviceUrl = urlBuilder.build('/rest/' + storeCode + '/V1/productPurchaseCount/' + productId);
+                this._callApi(serviceUrl);
+            }
         },
 
         /**
@@ -42,7 +47,8 @@ define([
             ).done(function (result) {
                 this._displayMessage(result);
             }.bind(this)).fail(function (response) {
-                console.log(response);
+                // Enable for debug
+                //console.log(response);
             });
         },
 
@@ -51,10 +57,17 @@ define([
          *
          * @param {Object} result
          * @private
+         * @return void
          */
         _displayMessage: function (result) {
-            if (typeof $(this.defaults.selectorId) !== "undefined") {
-                $(this.defaults.selectorId).html('test ' + result.count);
+            const divSelector = this.options.selectorId || this.defaults.selectorId;
+
+            if (typeof $(divSelector) !== "undefined"
+                && typeof result === "object"
+                && result.hasOwnProperty('count')
+                && result.count > 0
+            ) {
+                $(divSelector).html('test ' + result.count);
             }
         }
     });

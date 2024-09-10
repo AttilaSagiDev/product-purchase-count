@@ -111,17 +111,17 @@ class PurchaseCalculation implements PurchaseCalculationInterface
         $storeId = $this->storeManager->getStore()->getId();
 
         $productPurchaseCountOriginal = $this->productPurchaseCountFactory->create();
-        $orderIds = $this->getOrderIdsByProductId($productId);
+        /*$orderIds = $this->getOrderIdsByProductId($productId);
         if (!empty($orderIds)) {
             $searchCriteria = $this->searchCriteriaBuilder
-                ->addFilter(OrderInterface::ENTITY_ID, $orderIds, 'in')
+                ->addFilter(OrderInterface::ENTITY_ID, array_unique($orderIds), 'in')
                 ->addFilter(OrderInterface::STORE_ID, $this->storeManager->getStore()->getId())
                 ->create();
             $orderCount = $this->orderRepository->getList($searchCriteria);
             $productPurchaseCountOriginal->setCount($orderCount->getTotalCount());
         } else {
             $productPurchaseCountOriginal->setCount(0);
-        }
+        }*/
 
         $timeEnd = microtime(true);
         $executionTime = $timeEnd - $timeStart;
@@ -132,10 +132,13 @@ class PurchaseCalculation implements PurchaseCalculationInterface
         try {
             $timeStart = microtime(true);
 
+            $this->logger->debug('Space getOrdersCount API Direct');
+
             $productPurchaseCount = $this->productPurchaseCountFactory->create();
             $orderIds = $this->fetchOrderIdsByProductId($productId, (int)$storeId);
+
             if (!empty($orderIds)) {
-                $orderCount = $this->fetchOrdersCountByOrderIds($orderIds, (int)$storeId);
+                $orderCount = $this->fetchOrdersCountByOrderIds(array_unique($orderIds), (int)$storeId);
                 $productPurchaseCount->setCount($orderCount);
             } else {
                 $productPurchaseCount->setCount(0);
@@ -144,7 +147,6 @@ class PurchaseCalculation implements PurchaseCalculationInterface
             $timeEnd = microtime(true);
             $executionTime = $timeEnd - $timeStart;
 
-            $this->logger->debug('Space getOrdersCount API Direct');
             $this->logger->debug('Store Id: ' . $storeId);
             $this->logger->debug('Time: ' . $executionTime);
 
@@ -172,10 +174,12 @@ class PurchaseCalculation implements PurchaseCalculationInterface
         $select = $connection->select()
             ->from(
                 $this->resourceOrder->getMainTable(),
-                new \Zend_Db_Expr('COUNT(*)')
+                new \Zend_Db_Expr('COUNT(DISTINCT customer_email)')
             )
             ->where(OrderInterface::ENTITY_ID . ' IN (?)', $orderIds)
             ->where('store_id = ?', $storeId);
+
+        $this->logger->debug((string)$select);
 
         return (int)$connection->fetchOne($select);
     }
@@ -195,6 +199,8 @@ class PurchaseCalculation implements PurchaseCalculationInterface
             ->from($this->resourceItem->getMainTable(), OrderItemInterface::ORDER_ID)
             ->where(OrderItemInterface::PRODUCT_ID . ' = ?', $productId)
             ->where(OrderItemInterface::STORE_ID . ' = ?', $storeId);
+
+        $this->logger->debug((string)$select);
 
         return $connection->fetchCol($select);
     }

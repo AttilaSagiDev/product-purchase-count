@@ -10,8 +10,7 @@ namespace Space\ProductPurchaseCount\ViewModel\Catalog\View;
 
 use Magento\Framework\View\Element\Block\ArgumentInterface;
 use Magento\Framework\Registry;
-use Space\ProductPurchaseCount\Api\PurchaseCalculationInterface;
-use Psr\Log\LoggerInterface;
+use Magento\Store\Model\StoreManagerInterface;
 
 class Count implements ArgumentInterface
 {
@@ -21,28 +20,20 @@ class Count implements ArgumentInterface
     private Registry $registry;
 
     /**
-     * @var PurchaseCalculationInterface
+     * @var StoreManagerInterface
      */
-    private PurchaseCalculationInterface $purchaseCalculation;
-
-    /**
-     * @var LoggerInterface
-     */
-    private LoggerInterface $logger;
+    private StoreManagerInterface $storeManager;
 
     /**
      * @param Registry $registry
-     * @param PurchaseCalculationInterface $purchaseCalculation
-     * @param LoggerInterface $logger
+     * @param StoreManagerInterface $storeManager
      */
     public function __construct(
         Registry $registry,
-        PurchaseCalculationInterface $purchaseCalculation,
-        LoggerInterface $logger
+        StoreManagerInterface $storeManager
     ) {
         $this->registry = $registry;
-        $this->purchaseCalculation = $purchaseCalculation;
-        $this->logger = $logger;
+        $this->storeManager = $storeManager;
     }
 
     /**
@@ -56,22 +47,13 @@ class Count implements ArgumentInterface
     }
 
     /**
-     * Get orders count
+     * Get store code
      *
-     * @return int|null
+     * @return string
+     * @throws \Magento\Framework\Exception\NoSuchEntityException
      */
-    public function getOrdersCount(): ?int
+    public function getStoreCode(): string
     {
-        $timeStart = microtime(true);
-
-        $orderCount = $this->purchaseCalculation->getPurchaseCount($this->getProductId())->getCount();
-
-        $timeEnd = microtime(true);
-        $executionTime = $timeEnd - $timeStart;
-
-        $this->logger->debug('Space getOrdersCount');
-        $this->logger->debug('Time: '. $executionTime);
-
-        return $orderCount;
+        return $this->storeManager->getStore()->getCode();
     }
 }
