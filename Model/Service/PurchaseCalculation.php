@@ -11,9 +11,6 @@ namespace Space\ProductPurchaseCount\Model\Service;
 use Space\ProductPurchaseCount\Api\Data\ProductPurchaseCountInterface;
 use Space\ProductPurchaseCount\Api\PurchaseCalculationInterface;
 use Space\ProductPurchaseCount\Api\Data\ProductPurchaseCountInterfaceFactory;
-use Magento\Sales\Api\OrderItemRepositoryInterface;
-use Magento\Sales\Api\OrderRepositoryInterface;
-use Magento\Framework\Api\SearchCriteriaBuilder;
 use Magento\Sales\Model\ResourceModel\Order\CollectionFactory as OrderCollectionFactory;
 use Magento\Sales\Model\ResourceModel\Order\Item\CollectionFactory as OrderItemCollectionFactory;
 use Magento\Store\Model\StoreManagerInterface;
@@ -30,21 +27,6 @@ class PurchaseCalculation implements PurchaseCalculationInterface
      * @var ProductPurchaseCountInterfaceFactory
      */
     private ProductPurchaseCountInterfaceFactory $productPurchaseCountFactory;
-
-    /**
-     * @var OrderItemRepositoryInterface
-     */
-    private OrderItemRepositoryInterface $orderItemRepository;
-
-    /**
-     * @var OrderRepositoryInterface
-     */
-    private OrderRepositoryInterface $orderRepository;
-
-    /**
-     * @var SearchCriteriaBuilder
-     */
-    private SearchCriteriaBuilder $searchCriteriaBuilder;
 
     /**
      * @var OrderCollectionFactory
@@ -80,9 +62,6 @@ class PurchaseCalculation implements PurchaseCalculationInterface
      * Construct
      *
      * @param ProductPurchaseCountInterfaceFactory $productPurchaseCountFactory
-     * @param OrderItemRepositoryInterface $orderItemRepository
-     * @param OrderRepositoryInterface $orderRepository
-     * @param SearchCriteriaBuilder $searchCriteriaBuilder
      * @param OrderCollectionFactory $orderCollectionFactory
      * @param OrderItemCollectionFactory $orderItemCollectionFactory
      * @param StoreManagerInterface $storeManager
@@ -92,9 +71,6 @@ class PurchaseCalculation implements PurchaseCalculationInterface
      */
     public function __construct(
         ProductPurchaseCountInterfaceFactory $productPurchaseCountFactory,
-        OrderItemRepositoryInterface $orderItemRepository,
-        OrderRepositoryInterface $orderRepository,
-        SearchCriteriaBuilder $searchCriteriaBuilder,
         OrderCollectionFactory $orderCollectionFactory,
         OrderItemCollectionFactory $orderItemCollectionFactory,
         StoreManagerInterface $storeManager,
@@ -103,9 +79,6 @@ class PurchaseCalculation implements PurchaseCalculationInterface
         LoggerInterface $logger
     ) {
         $this->productPurchaseCountFactory = $productPurchaseCountFactory;
-        $this->orderItemRepository = $orderItemRepository;
-        $this->orderRepository = $orderRepository;
-        $this->searchCriteriaBuilder = $searchCriteriaBuilder;
         $this->orderCollectionFactory = $orderCollectionFactory;
         $this->orderItemCollectionFactory = $orderItemCollectionFactory;
         $this->storeManager = $storeManager;
@@ -229,30 +202,6 @@ class PurchaseCalculation implements PurchaseCalculationInterface
             ->where(OrderItemInterface::STORE_ID . ' = ?', $storeId);
 
         return $connection->fetchCol($select);
-    }
-
-    /**
-     * Get order Ids by product ID
-     *
-     * @param int $productId
-     * @return array
-     */
-    private function getOrderIdsByProductId(int $productId): array
-    {
-        $orderIds = [];
-
-        $searchCriteria = $this->searchCriteriaBuilder
-            ->addFilter(OrderItemInterface::PRODUCT_ID, $productId)
-            ->create();
-        $orderItems = $this->orderItemRepository->getList($searchCriteria)->getItems();
-
-        if (!empty($orderItems)) {
-            foreach ($orderItems as $orderItem) {
-                $orderIds[] = $orderItem->getOrderId();
-            }
-        }
-
-        return $orderIds;
     }
 
     /**
