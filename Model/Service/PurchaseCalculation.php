@@ -14,6 +14,8 @@ use Space\ProductPurchaseCount\Api\Data\ProductPurchaseCountInterfaceFactory;
 use Magento\Sales\Api\OrderItemRepositoryInterface;
 use Magento\Sales\Api\OrderRepositoryInterface;
 use Magento\Framework\Api\SearchCriteriaBuilder;
+use Magento\Sales\Model\ResourceModel\Order\CollectionFactory as OrderCollectionFactory;
+use Magento\Sales\Model\ResourceModel\Order\Item\CollectionFactory as OrderItemCollectionFactory;
 use Magento\Store\Model\StoreManagerInterface;
 use Magento\Sales\Model\ResourceModel\Order\Item as ResourceItem;
 use Magento\Sales\Model\ResourceModel\Order as ResourceOrder;
@@ -45,6 +47,16 @@ class PurchaseCalculation implements PurchaseCalculationInterface
     private SearchCriteriaBuilder $searchCriteriaBuilder;
 
     /**
+     * @var OrderCollectionFactory
+     */
+    private OrderCollectionFactory $orderCollectionFactory;
+
+    /**
+     * @var OrderItemCollectionFactory
+     */
+    private OrderItemCollectionFactory $orderItemCollectionFactory;
+
+    /**
      * @var StoreManagerInterface
      */
     private StoreManagerInterface $storeManager;
@@ -71,6 +83,8 @@ class PurchaseCalculation implements PurchaseCalculationInterface
      * @param OrderItemRepositoryInterface $orderItemRepository
      * @param OrderRepositoryInterface $orderRepository
      * @param SearchCriteriaBuilder $searchCriteriaBuilder
+     * @param OrderCollectionFactory $orderCollectionFactory
+     * @param OrderItemCollectionFactory $orderItemCollectionFactory
      * @param StoreManagerInterface $storeManager
      * @param ResourceItem $resourceItem
      * @param ResourceOrder $resourceOrder
@@ -81,6 +95,8 @@ class PurchaseCalculation implements PurchaseCalculationInterface
         OrderItemRepositoryInterface $orderItemRepository,
         OrderRepositoryInterface $orderRepository,
         SearchCriteriaBuilder $searchCriteriaBuilder,
+        OrderCollectionFactory $orderCollectionFactory,
+        OrderItemCollectionFactory $orderItemCollectionFactory,
         StoreManagerInterface $storeManager,
         ResourceItem $resourceItem,
         ResourceOrder $resourceOrder,
@@ -90,6 +106,8 @@ class PurchaseCalculation implements PurchaseCalculationInterface
         $this->orderItemRepository = $orderItemRepository;
         $this->orderRepository = $orderRepository;
         $this->searchCriteriaBuilder = $searchCriteriaBuilder;
+        $this->orderCollectionFactory = $orderCollectionFactory;
+        $this->orderItemCollectionFactory = $orderItemCollectionFactory;
         $this->storeManager = $storeManager;
         $this->resourceItem = $resourceItem;
         $this->resourceOrder = $resourceOrder;
@@ -104,32 +122,42 @@ class PurchaseCalculation implements PurchaseCalculationInterface
      */
     public function getPurchaseCount(int $productId): ProductPurchaseCountInterface
     {
-        $timeStart = microtime(true);
-
-        $this->logger->debug('Space getOrdersCount API');
-
-        $storeId = $this->storeManager->getStore()->getId();
-
         $productPurchaseCountOriginal = $this->productPurchaseCountFactory->create();
-        /*$orderIds = $this->getOrderIdsByProductId($productId);
-        if (!empty($orderIds)) {
-            $searchCriteria = $this->searchCriteriaBuilder
-                ->addFilter(OrderInterface::ENTITY_ID, array_unique($orderIds), 'in')
-                ->addFilter(OrderInterface::STORE_ID, $this->storeManager->getStore()->getId())
-                ->create();
-            $orderCount = $this->orderRepository->getList($searchCriteria);
-            $productPurchaseCountOriginal->setCount($orderCount->getTotalCount());
-        } else {
-            $productPurchaseCountOriginal->setCount(0);
-        }*/
-
-        $timeEnd = microtime(true);
-        $executionTime = $timeEnd - $timeStart;
-
-        $this->logger->debug('Store Id: ' . $storeId);
-        $this->logger->debug('Time: ' . $executionTime);
-
         try {
+            //-------------------
+
+            $storeId = $this->storeManager->getStore()->getId();
+
+            //-------------------
+
+            $timeStart = microtime(true);
+            $this->logger->debug('Space getOrdersCount Collection');
+
+            $orderIds = $this->getOrderIdsByProductIdCollection($productId, (int)$storeId);
+            if (!empty($orderIds)) {
+                $orderCollection = $this->orderCollectionFactory->create();
+                $orderCollection->addAttributeToSelect(OrderInterface::CUSTOMER_EMAIL)
+                    ->addFieldToFilter(OrderInterface::ENTITY_ID, ['in' => array_unique($orderIds)])
+                    ->addFieldToFilter(OrderInterface::STORE_ID, ['eq' => $storeId]);
+                $orderCollection->getSelect()
+                    ->distinct()
+                    ->group(OrderInterface::CUSTOMER_EMAIL);
+
+                $productPurchaseCountOriginal->setCount($orderCollection->getSize());
+            } else {
+                $productPurchaseCountOriginal->setCount(0);
+            }
+            $this->logger->debug('Count: ' . $productPurchaseCountOriginal->getCount());
+
+            $timeEnd = microtime(true);
+            $executionTime = $timeEnd - $timeStart;
+
+            $this->logger->debug('Store Id: ' . $storeId);
+            $this->logger->debug('Time: ' . $executionTime);
+            $this->logger->debug('-----------');
+
+            //-------------------
+
             $timeStart = microtime(true);
 
             $this->logger->debug('Space getOrdersCount API Direct');
@@ -143,12 +171,14 @@ class PurchaseCalculation implements PurchaseCalculationInterface
             } else {
                 $productPurchaseCount->setCount(0);
             }
+            $this->logger->debug('Count: ' . $productPurchaseCount->getCount());
 
             $timeEnd = microtime(true);
             $executionTime = $timeEnd - $timeStart;
 
             $this->logger->debug('Store Id: ' . $storeId);
             $this->logger->debug('Time: ' . $executionTime);
+            $this->logger->debug('-----------');
 
             return $productPurchaseCount;
         } catch (LocalizedException $e) {
@@ -179,8 +209,6 @@ class PurchaseCalculation implements PurchaseCalculationInterface
             ->where(OrderInterface::ENTITY_ID . ' IN (?)', $orderIds)
             ->where('store_id = ?', $storeId);
 
-        $this->logger->debug((string)$select);
-
         return (int)$connection->fetchOne($select);
     }
 
@@ -199,8 +227,6 @@ class PurchaseCalculation implements PurchaseCalculationInterface
             ->from($this->resourceItem->getMainTable(), OrderItemInterface::ORDER_ID)
             ->where(OrderItemInterface::PRODUCT_ID . ' = ?', $productId)
             ->where(OrderItemInterface::STORE_ID . ' = ?', $storeId);
-
-        $this->logger->debug((string)$select);
 
         return $connection->fetchCol($select);
     }
@@ -222,6 +248,30 @@ class PurchaseCalculation implements PurchaseCalculationInterface
 
         if (!empty($orderItems)) {
             foreach ($orderItems as $orderItem) {
+                $orderIds[] = $orderItem->getOrderId();
+            }
+        }
+
+        return $orderIds;
+    }
+
+    /**
+     * Get order Ids by product ID collection
+     *
+     * @param int $productId
+     * @param int $storeId
+     * @return array
+     */
+    private function getOrderIdsByProductIdCollection(int $productId, int $storeId): array
+    {
+        $orderIds = [];
+
+        $orderItemCollection = $this->orderItemCollectionFactory->create();
+        $orderItemCollection->addAttributeToSelect(OrderItemInterface::ORDER_ID)
+            ->addFieldToFilter(OrderItemInterface::STORE_ID, ['eq' => $storeId])
+            ->addFieldToFilter(OrderItemInterface::PRODUCT_ID, ['eq' => $productId]);
+        if ($orderItemCollection->getSize()) {
+            foreach ($orderItemCollection as $orderItem) {
                 $orderIds[] = $orderItem->getOrderId();
             }
         }
