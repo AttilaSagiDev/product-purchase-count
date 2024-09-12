@@ -16,6 +16,8 @@ use Magento\Sales\Model\ResourceModel\Order\Item\CollectionFactory as OrderItemC
 use Magento\Store\Model\StoreManagerInterface;
 use Magento\Sales\Model\ResourceModel\Order\Item as ResourceItem;
 use Magento\Sales\Model\ResourceModel\Order as ResourceOrder;
+use Magento\Framework\Stdlib\DateTime\DateTime;
+use Magento\Framework\Stdlib\DateTime as StdlibDateTime;
 use Psr\Log\LoggerInterface;
 use Magento\Sales\Api\Data\OrderInterface;
 use Magento\Sales\Api\Data\OrderItemInterface;
@@ -54,6 +56,11 @@ class PurchaseCalculation implements PurchaseCalculationInterface
     private ResourceOrder $resourceOrder;
 
     /**
+     * @var DateTime
+     */
+    private DateTime $dateTime;
+
+    /**
      * @var LoggerInterface
      */
     private LoggerInterface $logger;
@@ -67,6 +74,7 @@ class PurchaseCalculation implements PurchaseCalculationInterface
      * @param StoreManagerInterface $storeManager
      * @param ResourceItem $resourceItem
      * @param ResourceOrder $resourceOrder
+     * @param DateTime $dateTime
      * @param LoggerInterface $logger
      */
     public function __construct(
@@ -76,6 +84,7 @@ class PurchaseCalculation implements PurchaseCalculationInterface
         StoreManagerInterface $storeManager,
         ResourceItem $resourceItem,
         ResourceOrder $resourceOrder,
+        DateTime $dateTime,
         LoggerInterface $logger
     ) {
         $this->productPurchaseCountFactory = $productPurchaseCountFactory;
@@ -84,6 +93,7 @@ class PurchaseCalculation implements PurchaseCalculationInterface
         $this->storeManager = $storeManager;
         $this->resourceItem = $resourceItem;
         $this->resourceOrder = $resourceOrder;
+        $this->dateTime = $dateTime;
         $this->logger = $logger;
     }
 
@@ -100,6 +110,9 @@ class PurchaseCalculation implements PurchaseCalculationInterface
             //-------------------
 
             $storeId = $this->storeManager->getStore()->getId();
+            $endDate = $this->dateTime->date(StdlibDateTime::DATE_PHP_FORMAT . ' 23:59:59');
+            $startDate = $this->dateTime->date(StdlibDateTime::DATE_PHP_FORMAT, strtotime($endDate . ' -7 days'));
+            $startDate .= ' 00:00:00';
 
             //-------------------
 
@@ -107,14 +120,21 @@ class PurchaseCalculation implements PurchaseCalculationInterface
             $this->logger->debug('Space getOrdersCount Collection');
 
             $orderIds = $this->getOrderIdsByProductIdCollection($productId, (int)$storeId);
+
             if (!empty($orderIds)) {
                 $orderCollection = $this->orderCollectionFactory->create();
                 $orderCollection->addAttributeToSelect(OrderInterface::CUSTOMER_EMAIL)
                     ->addFieldToFilter(OrderInterface::ENTITY_ID, ['in' => array_unique($orderIds)])
-                    ->addFieldToFilter(OrderInterface::STORE_ID, ['eq' => $storeId]);
+                    ->addFieldToFilter(OrderInterface::STORE_ID, ['eq' => $storeId])
+                    ->addFieldToFilter(
+                        OrderInterface::CREATED_AT,
+                        ['from' => $startDate, 'to' => $endDate]
+                    );
                 $orderCollection->getSelect()
                     ->distinct()
                     ->group(OrderInterface::CUSTOMER_EMAIL);
+
+                $this->logger->debug((string)$orderCollection->getSelect());
 
                 $productPurchaseCountOriginal->setCount($orderCollection->getSize());
             } else {
@@ -125,6 +145,8 @@ class PurchaseCalculation implements PurchaseCalculationInterface
             $timeEnd = microtime(true);
             $executionTime = $timeEnd - $timeStart;
 
+            $this->logger->debug('From Date: ' . $startDate);
+            $this->logger->debug('To Date: ' . $endDate);
             $this->logger->debug('Store Id: ' . $storeId);
             $this->logger->debug('Time: ' . $executionTime);
             $this->logger->debug('-----------');
