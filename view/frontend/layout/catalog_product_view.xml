@@ -19,5 +19,16 @@
                 </arguments>
             </block>
         </referenceContainer>
+        <referenceContainer name="before.body.end">
+            <block name="space.product.purchase.count.script"
+                   template="Space_ProductPurchaseCount::catalog/view/script/script.phtml"
+                   before="-">
+                <arguments>
+                    <argument name="view_model" xsi:type="object">
+                        Space\ProductPurchaseCount\ViewModel\Catalog\View\Count
+                    </argument>
+                </arguments>
+            </block>
+        </referenceContainer>
     </body>
 </page>
