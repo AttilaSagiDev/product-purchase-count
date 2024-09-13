@@ -119,32 +119,25 @@ class PurchaseCalculation implements PurchaseCalculationInterface
             $timeStart = microtime(true);
             $this->logger->debug('Space getOrdersCount Collection');
 
-            $orderIds = $this->getOrderIdsByProductIdCollection($productId, (int)$storeId);
+            $orderIds = $this->getOrderIdsByProductIdCollection($productId, (int)$storeId, $startDate, $endDate);
 
             if (!empty($orderIds)) {
                 $orderCollection = $this->orderCollectionFactory->create();
                 $orderCollection->addAttributeToSelect(OrderInterface::CUSTOMER_EMAIL)
                     ->addFieldToFilter(OrderInterface::ENTITY_ID, ['in' => array_unique($orderIds)])
-                    ->addFieldToFilter(OrderInterface::STORE_ID, ['eq' => $storeId])
-                    ->addFieldToFilter(
-                        OrderInterface::CREATED_AT,
-                        ['from' => $startDate, 'to' => $endDate]
-                    );
+                    ->addFieldToFilter(OrderInterface::STORE_ID, ['eq' => $storeId]);
                 $orderCollection->getSelect()
                     ->distinct()
                     ->group(OrderInterface::CUSTOMER_EMAIL);
-
-                $this->logger->debug((string)$orderCollection->getSelect());
-
                 $productPurchaseCountOriginal->setCount($orderCollection->getSize());
             } else {
                 $productPurchaseCountOriginal->setCount(0);
             }
-            $this->logger->debug('Count: ' . $productPurchaseCountOriginal->getCount());
 
             $timeEnd = microtime(true);
             $executionTime = $timeEnd - $timeStart;
 
+            $this->logger->debug('Collection count: ' . $productPurchaseCountOriginal->getCount());
             $this->logger->debug('From Date: ' . $startDate);
             $this->logger->debug('To Date: ' . $endDate);
             $this->logger->debug('Store Id: ' . $storeId);
@@ -158,7 +151,7 @@ class PurchaseCalculation implements PurchaseCalculationInterface
             $this->logger->debug('Space getOrdersCount API Direct');
 
             $productPurchaseCount = $this->productPurchaseCountFactory->create();
-            $orderIds = $this->fetchOrderIdsByProductId($productId, (int)$storeId);
+            $orderIds = $this->fetchOrderIdsByProductId($productId, (int)$storeId, $startDate, $endDate);
 
             if (!empty($orderIds)) {
                 $orderCount = $this->fetchOrdersCountByOrderIds(array_unique($orderIds), (int)$storeId);
@@ -166,11 +159,13 @@ class PurchaseCalculation implements PurchaseCalculationInterface
             } else {
                 $productPurchaseCount->setCount(0);
             }
-            $this->logger->debug('Count: ' . $productPurchaseCount->getCount());
 
             $timeEnd = microtime(true);
             $executionTime = $timeEnd - $timeStart;
 
+            $this->logger->debug('Direct count: ' . $productPurchaseCount->getCount());
+            $this->logger->debug('From Date: ' . $startDate);
+            $this->logger->debug('To Date: ' . $endDate);
             $this->logger->debug('Store Id: ' . $storeId);
             $this->logger->debug('Time: ' . $executionTime);
             $this->logger->debug('-----------');
@@ -212,16 +207,26 @@ class PurchaseCalculation implements PurchaseCalculationInterface
      *
      * @param int $productId
      * @param int $storeId
+     * @param string $startDate
+     * @param string $endDate
      * @return array
      * @throws LocalizedException
      */
-    private function fetchOrderIdsByProductId(int $productId, int $storeId): array
-    {
+    private function fetchOrderIdsByProductId(
+        int $productId,
+        int $storeId,
+        string $startDate,
+        string $endDate
+    ): array {
         $connection = $this->resourceItem->getConnection();
         $select = $connection->select()
             ->from($this->resourceItem->getMainTable(), OrderItemInterface::ORDER_ID)
             ->where(OrderItemInterface::PRODUCT_ID . ' = ?', $productId)
-            ->where(OrderItemInterface::STORE_ID . ' = ?', $storeId);
+            ->where(OrderItemInterface::STORE_ID . ' = ?', $storeId)
+            ->where(OrderItemInterface::CREATED_AT . ' >= ?', $startDate)
+            ->where(OrderItemInterface::CREATED_AT . ' <= ?', $endDate);
+
+        $this->logger->debug((string)$select);
 
         return $connection->fetchCol($select);
     }
@@ -231,21 +236,35 @@ class PurchaseCalculation implements PurchaseCalculationInterface
      *
      * @param int $productId
      * @param int $storeId
+     * string $startDate,
+     * string $endDate
+     * @param string $startDate
+     * @param string $endDate
      * @return array
      */
-    private function getOrderIdsByProductIdCollection(int $productId, int $storeId): array
-    {
+    private function getOrderIdsByProductIdCollection(
+        int $productId,
+        int $storeId,
+        string $startDate,
+        string $endDate
+    ): array {
         $orderIds = [];
 
         $orderItemCollection = $this->orderItemCollectionFactory->create();
         $orderItemCollection->addAttributeToSelect(OrderItemInterface::ORDER_ID)
             ->addFieldToFilter(OrderItemInterface::STORE_ID, ['eq' => $storeId])
-            ->addFieldToFilter(OrderItemInterface::PRODUCT_ID, ['eq' => $productId]);
+            ->addFieldToFilter(OrderItemInterface::PRODUCT_ID, ['eq' => $productId])
+            ->addFieldToFilter(
+                OrderInterface::CREATED_AT,
+                ['from' => $startDate, 'to' => $endDate]
+            );
         if ($orderItemCollection->getSize()) {
             foreach ($orderItemCollection as $orderItem) {
                 $orderIds[] = $orderItem->getOrderId();
             }
         }
+
+        $this->logger->debug((string)$orderItemCollection->getSelect());
 
         return $orderIds;
     }
