@@ -34,13 +34,16 @@ class Count implements ArgumentInterface
     /**
      * @param Registry $registry
      * @param StoreManagerInterface $storeManager
+     * @param ConfigInterface $config
      */
     public function __construct(
         Registry $registry,
-        StoreManagerInterface $storeManager
+        StoreManagerInterface $storeManager,
+        ConfigInterface $config
     ) {
         $this->registry = $registry;
         $this->storeManager = $storeManager;
+        $this->config = $config;
     }
 
     /**

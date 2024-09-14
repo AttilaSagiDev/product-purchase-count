@@ -24,6 +24,16 @@ class ProductPurchaseCount extends AbstractModel implements ProductPurchaseCount
     }
 
     /**
+     * Get notification text
+     *
+     * @return string
+     */
+    public function getNotificationText(): string
+    {
+        return $this->getData(self::NOTIFICATION_TEXT);
+    }
+
+    /**
      * Set product purchase count
      *
      * @param int $count
@@ -32,5 +42,16 @@ class ProductPurchaseCount extends AbstractModel implements ProductPurchaseCount
     public function setCount(int $count): ProductPurchaseCountInterface
     {
         return $this->setData(self::COUNT, $count);
+    }
+
+    /**
+     * Set notification text
+     *
+     * @param string $notificationText
+     * @return ProductPurchaseCountInterface
+     */
+    public function setNotificationText(string $notificationText): ProductPurchaseCountInterface
+    {
+        return $this->setData(self::NOTIFICATION_TEXT, $notificationText);
     }
 }

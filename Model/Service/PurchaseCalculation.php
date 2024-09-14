@@ -18,6 +18,7 @@ use Magento\Sales\Model\ResourceModel\Order\Item as ResourceItem;
 use Magento\Sales\Model\ResourceModel\Order as ResourceOrder;
 use Magento\Framework\Stdlib\DateTime\DateTime;
 use Magento\Framework\Stdlib\DateTime as StdlibDateTime;
+use Space\ProductPurchaseCount\Api\Data\ConfigInterface;
 use Psr\Log\LoggerInterface;
 use Magento\Sales\Api\Data\OrderInterface;
 use Magento\Sales\Api\Data\OrderItemInterface;
@@ -61,6 +62,11 @@ class PurchaseCalculation implements PurchaseCalculationInterface
     private DateTime $dateTime;
 
     /**
+     * @var ConfigInterface
+     */
+    private ConfigInterface $config;
+
+    /**
      * @var LoggerInterface
      */
     private LoggerInterface $logger;
@@ -75,6 +81,7 @@ class PurchaseCalculation implements PurchaseCalculationInterface
      * @param ResourceItem $resourceItem
      * @param ResourceOrder $resourceOrder
      * @param DateTime $dateTime
+     * @param ConfigInterface $config
      * @param LoggerInterface $logger
      */
     public function __construct(
@@ -85,6 +92,7 @@ class PurchaseCalculation implements PurchaseCalculationInterface
         ResourceItem $resourceItem,
         ResourceOrder $resourceOrder,
         DateTime $dateTime,
+        ConfigInterface $config,
         LoggerInterface $logger
     ) {
         $this->productPurchaseCountFactory = $productPurchaseCountFactory;
@@ -94,6 +102,7 @@ class PurchaseCalculation implements PurchaseCalculationInterface
         $this->resourceItem = $resourceItem;
         $this->resourceOrder = $resourceOrder;
         $this->dateTime = $dateTime;
+        $this->config = $config;
         $this->logger = $logger;
     }
 
@@ -156,8 +165,10 @@ class PurchaseCalculation implements PurchaseCalculationInterface
             if (!empty($orderIds)) {
                 $orderCount = $this->fetchOrdersCountByOrderIds(array_unique($orderIds), (int)$storeId);
                 $productPurchaseCount->setCount($orderCount);
+                $productPurchaseCount->setNotificationText($this->convertNotificationText($orderCount));
             } else {
                 $productPurchaseCount->setCount(0);
+                $productPurchaseCount->setNotificationText('');
             }
 
             $timeEnd = microtime(true);
@@ -229,6 +240,17 @@ class PurchaseCalculation implements PurchaseCalculationInterface
         $this->logger->debug((string)$select);
 
         return $connection->fetchCol($select);
+    }
+
+    /**
+     * Get notification text
+     *
+     * @param int $orderCount
+     * @return string
+     */
+    private function convertNotificationText(int $orderCount)
+    {
+        return str_replace('%c', (string)$orderCount, $this->config->getNotificationText());
     }
 
     /**

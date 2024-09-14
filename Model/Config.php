@@ -42,4 +42,30 @@ class Config implements ConfigInterface
             ScopeInterface::SCOPE_WEBSITE
         );
     }
+
+    /**
+     * Get interval
+     *
+     * @return int
+     */
+    public function getInterval(): int
+    {
+        return (int)$this->scopeConfig->getValue(
+            ConfigInterface::XML_PATH_INTERVAL,
+            ScopeInterface::SCOPE_WEBSITE
+        );
+    }
+
+    /**
+     * Get notification text
+     *
+     * @return string
+     */
+    public function getNotificationText(): string
+    {
+        return $this->scopeConfig->getValue(
+            ConfigInterface::XML_PATH_NOTIFICATION_TEXT,
+            ScopeInterface::SCOPE_WEBSITE
+        );
+    }
 }

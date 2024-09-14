@@ -26,6 +26,24 @@
                     <comment>Enable extension.</comment>
                 </field>
             </group>
+            <group id="product_purchase_count_display" translate="label" type="text" sortOrder="10"
+                   showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>Display</label>
+                <field id="interval" translate="label comment" type="select" sortOrder="10"
+                       showInDefault="1" showInWebsite="1" showInStore="0" canRestore="1">
+                    <label>Interval</label>
+                    <source_model>Space\ProductPurchaseCount\Model\Config\Source\Interval</source_model>
+                    <comment>Please select interval.</comment>
+                </field>
+                <field id="notification_text" translate="label comment" type="text" sortOrder="20"
+                       showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                    <label>Notification Text</label>
+                    <validate>required-entry</validate>
+                    <comment>
+                        <![CDATA[The notification text which will be displayed. Please note that the "%c" will be replaced with the count value, so you have to add it in the proper place within the text.]]>
+                    </comment>
+                </field>
+            </group>
         </section>
     </system>
 </config>

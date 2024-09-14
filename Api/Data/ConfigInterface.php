@@ -16,9 +16,33 @@ interface ConfigInterface
     public const XML_PATH_ENABLED = 'product_purchase_count/product_purchase_count_config/enabled';
 
     /**
+     * Interval config path
+     */
+    public const XML_PATH_INTERVAL = 'product_purchase_count/product_purchase_count_display/interval';
+
+    /**
+     * Enabled config path
+     */
+    public const XML_PATH_NOTIFICATION_TEXT = 'product_purchase_count/product_purchase_count_display/notification_text';
+
+    /**
      * Check if product purchase count module is enabled
      *
      * @return bool
      */
     public function isEnabled(): bool;
+
+    /**
+     * Get interval
+     *
+     * @return int
+     */
+    public function getInterval(): int;
+
+    /**
+     * Get notification text
+     *
+     * @return string
+     */
+    public function getNotificationText(): string;
 }
