@@ -12,6 +12,6 @@
 
 $viewModel = $block->getData('view_model');
 ?>
-<?php if (null !== $viewModel): ?>
+<?php if (null !== $viewModel && $viewModel->isEnabled()): ?>
     <div id="product-purchase-count"></div>
 <?php endif; ?>

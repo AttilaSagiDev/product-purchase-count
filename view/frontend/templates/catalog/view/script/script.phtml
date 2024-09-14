@@ -12,7 +12,7 @@
 
 $viewModel = $block->getData('view_model');
 ?>
-<?php if (null !== $viewModel): ?>
+<?php if (null !== $viewModel && $viewModel->isEnabled()): ?>
     <script type="text/x-magento-init">
         {
             "*": {

@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright (c) 2024 Attila Sagi
+ * @license http://www.opensource.org/licenses/mit-license.html  MIT License
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Store:etc/config.xsd">
+    <default>
+        <product_purchase_count>
+            <product_purchase_count_config>
+                <enabled>0</enabled>
+            </product_purchase_count_config>
+        </product_purchase_count>
+    </default>
+</config>

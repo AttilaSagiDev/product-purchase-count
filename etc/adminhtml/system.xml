@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright (c) 2024 Attila Sagi
+ * @license http://www.opensource.org/licenses/mit-license.html  MIT License
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
+    <system>
+        <tab id="space_tab" translate="label" sortOrder="500">
+            <label>Space Extensions</label>
+        </tab>
+        <section id="product_purchase_count" translate="label" type="text" sortOrder="100"
+                 showInDefault="1" showInWebsite="1" showInStore="1">
+            <label>Product Purchase Count</label>
+            <tab>space_tab</tab>
+            <resource>Space_ProductPurchaseCount::product_purchase_count</resource>
+            <group id="product_purchase_count_config" translate="label" type="text" sortOrder="10"
+                   showInDefault="1" showInWebsite="1" showInStore="0">
+                <label>Configuration</label>
+                <field id="enabled" translate="label comment" type="select" sortOrder="10" showInDefault="1"
+                       showInWebsite="1" showInStore="0" canRestore="1">
+                    <label>Enable Extension</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>Enable extension.</comment>
+                </field>
+            </group>
+        </section>
+    </system>
+</config>

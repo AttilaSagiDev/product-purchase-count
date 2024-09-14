@@ -11,6 +11,8 @@ namespace Space\ProductPurchaseCount\ViewModel\Catalog\View;
 use Magento\Framework\View\Element\Block\ArgumentInterface;
 use Magento\Framework\Registry;
 use Magento\Store\Model\StoreManagerInterface;
+use Space\ProductPurchaseCount\Api\Data\ConfigInterface;
+use Magento\Framework\Exception\NoSuchEntityException;
 
 class Count implements ArgumentInterface
 {
@@ -23,6 +25,11 @@ class Count implements ArgumentInterface
      * @var StoreManagerInterface
      */
     private StoreManagerInterface $storeManager;
+
+    /**
+     * @var ConfigInterface
+     */
+    private ConfigInterface $config;
 
     /**
      * @param Registry $registry
@@ -50,10 +57,20 @@ class Count implements ArgumentInterface
      * Get store code
      *
      * @return string
-     * @throws \Magento\Framework\Exception\NoSuchEntityException
+     * @throws NoSuchEntityException
      */
     public function getStoreCode(): string
     {
         return $this->storeManager->getStore()->getCode();
+    }
+
+    /**
+     * Check if product purchase count module is enabled
+     *
+     * @return bool
+     */
+    public function isEnabled(): bool
+    {
+        return $this->config->isEnabled();
     }
 }
