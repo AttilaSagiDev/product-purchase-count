@@ -11,6 +11,7 @@ namespace Space\ProductPurchaseCount\Model;
 use Magento\Store\Model\ScopeInterface;
 use Space\ProductPurchaseCount\Api\Data\ConfigInterface;
 use Magento\Framework\App\Config\ScopeConfigInterface;
+use Space\ProductPurchaseCount\Model\Config\Source\Interval;
 
 class Config implements ConfigInterface
 {
@@ -63,8 +64,15 @@ class Config implements ConfigInterface
      */
     public function getNotificationText(): string
     {
+        if ($this->getInterval() === Interval::LAST_THREE_DAYS) {
+            return $this->scopeConfig->getValue(
+                ConfigInterface::XML_PATH_NOTIFICATION_TEXT,
+                ScopeInterface::SCOPE_WEBSITE
+            );
+        }
+
         return $this->scopeConfig->getValue(
-            ConfigInterface::XML_PATH_NOTIFICATION_TEXT,
+            ConfigInterface::XML_PATH_EXTENDED_NOTIFICATION_TEXT,
             ScopeInterface::SCOPE_WEBSITE
         );
     }

@@ -13,5 +13,12 @@
 $viewModel = $block->getData('view_model');
 ?>
 <?php if (null !== $viewModel && $viewModel->isEnabled()): ?>
-    <div id="product-purchase-count"></div>
+    <style>
+        #product-purchase-count {
+            color: #006400;
+            background: #e5efe5;
+            padding: 12px;
+        }
+    </style>
+    <div id="product-purchase-count" class="no-display"></div>
 <?php endif; ?>

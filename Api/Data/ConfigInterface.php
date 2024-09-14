@@ -21,9 +21,15 @@ interface ConfigInterface
     public const XML_PATH_INTERVAL = 'product_purchase_count/product_purchase_count_display/interval';
 
     /**
-     * Enabled config path
+     * Base notification config path
      */
     public const XML_PATH_NOTIFICATION_TEXT = 'product_purchase_count/product_purchase_count_display/notification_text';
+
+    /**
+     * Extended notification config path
+     */
+    public const XML_PATH_EXTENDED_NOTIFICATION_TEXT =
+        'product_purchase_count/product_purchase_count_display/extended_notification_text';
 
     /**
      * Check if product purchase count module is enabled

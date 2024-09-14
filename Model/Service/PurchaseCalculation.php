@@ -120,7 +120,10 @@ class PurchaseCalculation implements PurchaseCalculationInterface
 
             $storeId = $this->storeManager->getStore()->getId();
             $endDate = $this->dateTime->date(StdlibDateTime::DATE_PHP_FORMAT . ' 23:59:59');
-            $startDate = $this->dateTime->date(StdlibDateTime::DATE_PHP_FORMAT, strtotime($endDate . ' -7 days'));
+            $startDate = $this->dateTime->date(
+                StdlibDateTime::DATE_PHP_FORMAT,
+                strtotime($endDate . ' -' . $this->config->getInterval() . ' days')
+            );
             $startDate .= ' 00:00:00';
 
             //-------------------
@@ -248,9 +251,14 @@ class PurchaseCalculation implements PurchaseCalculationInterface
      * @param int $orderCount
      * @return string
      */
-    private function convertNotificationText(int $orderCount)
+    private function convertNotificationText(int $orderCount): string
     {
-        return str_replace('%c', (string)$orderCount, $this->config->getNotificationText());
+        $notificationText = str_replace('%c', (string)$orderCount, $this->config->getNotificationText());
+        if ($orderCount === 1) {
+            $notificationText = str_replace('customers', 'customer', $notificationText);
+        }
+
+        return $notificationText;
     }
 
     /**

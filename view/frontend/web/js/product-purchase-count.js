@@ -67,7 +67,8 @@ define([
                 && result.hasOwnProperty('count')
                 && result.count > 0
             ) {
-                $(divSelector).html('test ' + result.count);
+                $(divSelector).html(result.notification_text);
+                $(divSelector).removeClass('no-display');
             }
         }
     });

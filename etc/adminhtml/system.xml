@@ -42,6 +42,20 @@
                     <comment>
                         <![CDATA[The notification text which will be displayed. Please note that the "%c" will be replaced with the count value, so you have to add it in the proper place within the text.]]>
                     </comment>
+                    <depends>
+                        <field id="*/product_purchase_count_display/interval">3</field>
+                    </depends>
+                </field>
+                <field id="extended_notification_text" translate="label comment" type="text" sortOrder="30"
+                       showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                    <label>Notification Text</label>
+                    <validate>required-entry</validate>
+                    <comment>
+                        <![CDATA[The notification text which will be displayed. Please note that the "%c" will be replaced with the count value, so you have to add it in the proper place within the text.]]>
+                    </comment>
+                    <depends>
+                        <field id="*/product_purchase_count_display/interval">7</field>
+                    </depends>
                 </field>
             </group>
         </section>

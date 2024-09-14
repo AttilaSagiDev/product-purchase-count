@@ -15,8 +15,11 @@
             <product_purchase_count_display>
                 <interval>3</interval>
                 <notification_text>
-                    <![CDATA[%c customers bought this product in the last 7 days.]]>
+                    <![CDATA[%c customers purchased this product in the last 3 days.]]>
                 </notification_text>
+                <extended_notification_text>
+                    <![CDATA[%c customers purchased this product in the last 7 days.]]>
+                </extended_notification_text>
             </product_purchase_count_display>
         </product_purchase_count>
     </default>
