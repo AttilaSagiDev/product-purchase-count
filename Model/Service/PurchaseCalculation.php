@@ -19,6 +19,7 @@ use Magento\Sales\Model\ResourceModel\Order as ResourceOrder;
 use Magento\Framework\Stdlib\DateTime\DateTime;
 use Magento\Framework\Stdlib\DateTime as StdlibDateTime;
 use Space\ProductPurchaseCount\Api\Data\ConfigInterface;
+use Magento\Framework\Escaper;
 use Psr\Log\LoggerInterface;
 use Magento\Sales\Api\Data\OrderInterface;
 use Magento\Sales\Api\Data\OrderItemInterface;
@@ -67,6 +68,11 @@ class PurchaseCalculation implements PurchaseCalculationInterface
     private ConfigInterface $config;
 
     /**
+     * @var Escaper
+     */
+    private Escaper $escaper;
+
+    /**
      * @var LoggerInterface
      */
     private LoggerInterface $logger;
@@ -82,6 +88,7 @@ class PurchaseCalculation implements PurchaseCalculationInterface
      * @param ResourceOrder $resourceOrder
      * @param DateTime $dateTime
      * @param ConfigInterface $config
+     * @param Escaper $escaper
      * @param LoggerInterface $logger
      */
     public function __construct(
@@ -93,6 +100,7 @@ class PurchaseCalculation implements PurchaseCalculationInterface
         ResourceOrder $resourceOrder,
         DateTime $dateTime,
         ConfigInterface $config,
+        Escaper $escaper,
         LoggerInterface $logger
     ) {
         $this->productPurchaseCountFactory = $productPurchaseCountFactory;
@@ -103,6 +111,7 @@ class PurchaseCalculation implements PurchaseCalculationInterface
         $this->resourceOrder = $resourceOrder;
         $this->dateTime = $dateTime;
         $this->config = $config;
+        $this->escaper = $escaper;
         $this->logger = $logger;
     }
 
@@ -136,11 +145,14 @@ class PurchaseCalculation implements PurchaseCalculationInterface
             if (!empty($orderIds)) {
                 $orderCollection = $this->orderCollectionFactory->create();
                 $orderCollection->addAttributeToSelect(OrderInterface::CUSTOMER_EMAIL)
-                    ->addFieldToFilter(OrderInterface::ENTITY_ID, ['in' => array_unique($orderIds)])
+                    ->addFieldToFilter(OrderInterface::ENTITY_ID, ['in' => $orderIds])
                     ->addFieldToFilter(OrderInterface::STORE_ID, ['eq' => $storeId]);
                 $orderCollection->getSelect()
                     ->distinct()
                     ->group(OrderInterface::CUSTOMER_EMAIL);
+
+                $this->logger->debug((string)$orderCollection->getSelect());
+
                 $productPurchaseCountOriginal->setCount($orderCollection->getSize());
             } else {
                 $productPurchaseCountOriginal->setCount(0);
@@ -213,6 +225,8 @@ class PurchaseCalculation implements PurchaseCalculationInterface
             ->where(OrderInterface::ENTITY_ID . ' IN (?)', $orderIds)
             ->where('store_id = ?', $storeId);
 
+        $this->logger->debug((string)$select);
+
         return (int)$connection->fetchOne($select);
     }
 
@@ -233,7 +247,7 @@ class PurchaseCalculation implements PurchaseCalculationInterface
         string $endDate
     ): array {
         $connection = $this->resourceItem->getConnection();
-        $select = $connection->select()
+        $select = $connection->select()->distinct()
             ->from($this->resourceItem->getMainTable(), OrderItemInterface::ORDER_ID)
             ->where(OrderItemInterface::PRODUCT_ID . ' = ?', $productId)
             ->where(OrderItemInterface::STORE_ID . ' = ?', $storeId)
@@ -258,7 +272,7 @@ class PurchaseCalculation implements PurchaseCalculationInterface
             $notificationText = str_replace('customers', 'customer', $notificationText);
         }
 
-        return $notificationText;
+        return $this->escaper->escapeHtml($notificationText, ['strong']);
     }
 
     /**
@@ -287,7 +301,7 @@ class PurchaseCalculation implements PurchaseCalculationInterface
             ->addFieldToFilter(
                 OrderInterface::CREATED_AT,
                 ['from' => $startDate, 'to' => $endDate]
-            );
+            )->distinct(true);
         if ($orderItemCollection->getSize()) {
             foreach ($orderItemCollection as $orderItem) {
                 $orderIds[] = $orderItem->getOrderId();
