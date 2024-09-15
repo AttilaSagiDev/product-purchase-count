@@ -57,6 +57,12 @@
                         <field id="*/product_purchase_count_display/interval">7</field>
                     </depends>
                 </field>
+                <field id="notification_position" translate="label comment" type="select" sortOrder="40"
+                       showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                    <label>Display Position</label>
+                    <source_model>Space\ProductPurchaseCount\Model\Config\Source\NotificationPosition</source_model>
+                    <comment>Please select where to display the notification on the product view page.</comment>
+                </field>
             </group>
         </section>
     </system>

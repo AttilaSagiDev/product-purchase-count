@@ -10,17 +10,17 @@ namespace Space\ProductPurchaseCount\Model\Config\Source;
 
 use Magento\Framework\Data\OptionSourceInterface;
 
-class Interval implements OptionSourceInterface
+class NotificationPosition implements OptionSourceInterface
 {
     /**
-     * Last three days
+     * After media gallery
      */
-    public const LAST_THREE_DAYS = 3;
+    public const AFTER_MEDIA_GALLERY = 'product.info.media';
 
     /**
-     * Last week
+     * After product info
      */
-    public const LAST_WEEK = 7;
+    public const AFTER_PRODUCT_INFO = 'product.info.main';
 
     /**
      * Return array of options as value-label pairs
@@ -31,12 +31,12 @@ class Interval implements OptionSourceInterface
     {
         return [
             [
-                'label' => __('Last 3 days'),
-                'value' => self::LAST_THREE_DAYS,
+                'label' => __('After Media Gallery'),
+                'value' => self::AFTER_MEDIA_GALLERY,
             ],
             [
-                'label' => __('Last week (7 days)'),
-                'value' => self::LAST_WEEK,
+                'label' => __('After Product Info'),
+                'value' => self::AFTER_PRODUCT_INFO,
             ]
         ];
     }

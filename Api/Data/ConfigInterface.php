@@ -32,6 +32,12 @@ interface ConfigInterface
         'product_purchase_count/product_purchase_count_display/extended_notification_text';
 
     /**
+     * Extended notification config path
+     */
+    public const XML_PATH_NOTIFICATION_POSITION =
+        'product_purchase_count/product_purchase_count_display/notification_position';
+
+    /**
      * Check if product purchase count module is enabled
      *
      * @return bool
@@ -51,4 +57,11 @@ interface ConfigInterface
      * @return string
      */
     public function getNotificationText(): string;
+
+    /**
+     * Get notification position
+     *
+     * @return string
+     */
+    public function getNotificationPosition(): string;
 }

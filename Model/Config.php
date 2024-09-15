@@ -76,4 +76,17 @@ class Config implements ConfigInterface
             ScopeInterface::SCOPE_WEBSITE
         );
     }
+
+    /**
+     * Get notification position
+     *
+     * @return string
+     */
+    public function getNotificationPosition(): string
+    {
+        return $this->scopeConfig->getValue(
+            ConfigInterface::XML_PATH_NOTIFICATION_POSITION,
+            ScopeInterface::SCOPE_WEBSITE
+        );
+    }
 }

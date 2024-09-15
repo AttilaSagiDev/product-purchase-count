@@ -10,8 +10,9 @@
  */
 
 $viewModel = $block->getData('view_model');
+$position = $block->getData('position');
 ?>
-<?php if (null !== $viewModel && $viewModel->isEnabled()): ?>
+<?php if (null !== $viewModel && null !== $position && $position === $viewModel->getPositionToShow()): ?>
     <style>
         #product-purchase-count {
             color: #006400;

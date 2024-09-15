@@ -13,6 +13,7 @@ use Magento\Framework\Registry;
 use Magento\Store\Model\StoreManagerInterface;
 use Space\ProductPurchaseCount\Api\Data\ConfigInterface;
 use Magento\Framework\Exception\NoSuchEntityException;
+use Space\ProductPurchaseCount\Model\Config\Source\NotificationPosition;
 
 class Count implements ArgumentInterface
 {
@@ -68,12 +69,12 @@ class Count implements ArgumentInterface
     }
 
     /**
-     * Check if product purchase count module is enabled
+     * Get position to show
      *
-     * @return bool
+     * @return string
      */
-    public function isEnabled(): bool
+    public function getPositionToShow(): string
     {
-        return $this->config->isEnabled();
+        return $this->config->getNotificationPosition();
     }
 }

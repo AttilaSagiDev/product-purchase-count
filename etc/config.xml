@@ -20,6 +20,7 @@
                 <extended_notification_text>
                     <![CDATA[<strong>%c customers</strong> purchased this product in the last 7 days.]]>
                 </extended_notification_text>
+                <notification_position>product.info.media</notification_position>
             </product_purchase_count_display>
         </product_purchase_count>
     </default>
