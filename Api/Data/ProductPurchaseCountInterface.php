@@ -14,6 +14,7 @@ interface ProductPurchaseCountInterface
      * Constants for keys of data array
      */
     public const COUNT = 'count';
+    public const NOTIFICATION_TEXT = 'notification_text';
 
     /**
      * Get product purchase count
@@ -23,10 +24,25 @@ interface ProductPurchaseCountInterface
     public function getCount(): ?int;
 
     /**
+     * Get notification text
+     *
+     * @return string
+     */
+    public function getNotificationText(): string;
+
+    /**
      * Set product purchase count
      *
      * @param int $count
      * @return ProductPurchaseCountInterface
      */
     public function setCount(int $count): ProductPurchaseCountInterface;
+
+    /**
+     * Set notification text
+     *
+     * @param string $notificationText
+     * @return ProductPurchaseCountInterface
+     */
+    public function setNotificationText(string $notificationText): ProductPurchaseCountInterface;
 }

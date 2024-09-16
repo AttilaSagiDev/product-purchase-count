@@ -7,6 +7,8 @@
 -->
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <preference for="Space\ProductPurchaseCount\Api\Data\ConfigInterface"
+                type="Space\ProductPurchaseCount\Model\Config" />
     <preference for="Space\ProductPurchaseCount\Api\Data\ProductPurchaseCountInterface"
                 type="Space\ProductPurchaseCount\Model\ProductPurchaseCount" />
     <preference for="Space\ProductPurchaseCount\Api\PurchaseCalculationInterface"

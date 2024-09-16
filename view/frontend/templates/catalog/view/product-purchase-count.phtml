@@ -6,12 +6,19 @@
 
 /**
  * @var $block \Magento\Framework\View\Element\Template
- * @var $escaper \Magento\Framework\Escaper
  * @var $viewModel \Space\ProductPurchaseCount\ViewModel\Catalog\View\Count
  */
 
 $viewModel = $block->getData('view_model');
+$position = $block->getData('position');
 ?>
-<?php if (null !== $viewModel): ?>
-    <div id="product-purchase-count"></div>
+<?php if (null !== $viewModel && null !== $position && $position === $viewModel->getPositionToShow()): ?>
+    <style>
+        #product-purchase-count {
+            color: #006400;
+            background: #e5efe5;
+            padding: 12px;
+        }
+    </style>
+    <div id="product-purchase-count" class="no-display"></div>
 <?php endif; ?>

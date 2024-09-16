@@ -11,6 +11,9 @@ namespace Space\ProductPurchaseCount\ViewModel\Catalog\View;
 use Magento\Framework\View\Element\Block\ArgumentInterface;
 use Magento\Framework\Registry;
 use Magento\Store\Model\StoreManagerInterface;
+use Space\ProductPurchaseCount\Api\Data\ConfigInterface;
+use Magento\Framework\Exception\NoSuchEntityException;
+use Space\ProductPurchaseCount\Model\Config\Source\NotificationPosition;
 
 class Count implements ArgumentInterface
 {
@@ -25,15 +28,23 @@ class Count implements ArgumentInterface
     private StoreManagerInterface $storeManager;
 
     /**
+     * @var ConfigInterface
+     */
+    private ConfigInterface $config;
+
+    /**
      * @param Registry $registry
      * @param StoreManagerInterface $storeManager
+     * @param ConfigInterface $config
      */
     public function __construct(
         Registry $registry,
-        StoreManagerInterface $storeManager
+        StoreManagerInterface $storeManager,
+        ConfigInterface $config
     ) {
         $this->registry = $registry;
         $this->storeManager = $storeManager;
+        $this->config = $config;
     }
 
     /**
@@ -50,10 +61,20 @@ class Count implements ArgumentInterface
      * Get store code
      *
      * @return string
-     * @throws \Magento\Framework\Exception\NoSuchEntityException
+     * @throws NoSuchEntityException
      */
     public function getStoreCode(): string
     {
         return $this->storeManager->getStore()->getCode();
+    }
+
+    /**
+     * Get position to show
+     *
+     * @return string
+     */
+    public function getPositionToShow(): string
+    {
+        return $this->config->getNotificationPosition();
     }
 }
