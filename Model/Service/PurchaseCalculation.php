@@ -22,6 +22,8 @@ use Psr\Log\LoggerInterface;
 use Magento\Sales\Api\Data\OrderInterface;
 use Magento\Sales\Api\Data\OrderItemInterface;
 use Magento\Framework\Exception\LocalizedException;
+use Space\ProductPurchaseCount\Model\Config\Source\OrderSates;
+use Magento\Sales\Model\Order;
 
 class PurchaseCalculation implements PurchaseCalculationInterface
 {
@@ -107,6 +109,8 @@ class PurchaseCalculation implements PurchaseCalculationInterface
     {
         $productPurchaseCount = $this->productPurchaseCountFactory->create();
         try {
+            $timeStart = microtime(true);
+
             $storeId = (int)$this->storeManager->getStore()->getId();
             $endDate = $this->dateTime->date(StdlibDateTime::DATE_PHP_FORMAT . ' 23:59:59');
             $startDate = $this->dateTime->date(
@@ -152,6 +156,10 @@ class PurchaseCalculation implements PurchaseCalculationInterface
             ->where(OrderInterface::ENTITY_ID . ' IN (?)', $orderIds)
             ->where('store_id = ?', $storeId);
 
+        if ($this->config->getOrdersState() !== OrderSates::ALL) {
+            $select->where(OrderInterface::STATE . ' = ?', Order::STATE_COMPLETE);
+        }
+
         return (int)$connection->fetchOne($select);
     }
 
@@ -177,7 +185,8 @@ class PurchaseCalculation implements PurchaseCalculationInterface
             ->where(OrderItemInterface::PRODUCT_ID . ' = ?', $productId)
             ->where(OrderItemInterface::STORE_ID . ' = ?', $storeId)
             ->where(OrderItemInterface::CREATED_AT . ' >= ?', $startDate)
-            ->where(OrderItemInterface::CREATED_AT . ' <= ?', $endDate);
+            ->where(OrderItemInterface::CREATED_AT . ' <= ?', $endDate)
+            ->limit($this->config->getMaximumOrders());
 
         return $connection->fetchCol($select);
     }
