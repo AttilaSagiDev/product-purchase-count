@@ -9,18 +9,14 @@ declare(strict_types=1);
 namespace Space\ProductPurchaseCount\Model\Config\Source;
 
 use Magento\Framework\Data\OptionSourceInterface;
+use Magento\Sales\Model\Order;
 
-class NotificationPosition implements OptionSourceInterface
+class OrderSates implements OptionSourceInterface
 {
     /**
-     * After product info
+     * All order states
      */
-    public const AFTER_PRODUCT_INFO = 'product.info.main';
-
-    /**
-     * After media gallery
-     */
-    public const AFTER_MEDIA_GALLERY = 'product.info.media';
+    public const ALL = 'all';
 
     /**
      * Return array of options as value-label pairs
@@ -31,12 +27,12 @@ class NotificationPosition implements OptionSourceInterface
     {
         return [
             [
-                'label' => __('After Product Info'),
-                'value' => self::AFTER_PRODUCT_INFO,
+                'label' => __('All order states'),
+                'value' => self::ALL,
             ],
             [
-                'label' => __('After Media Gallery'),
-                'value' => self::AFTER_MEDIA_GALLERY,
+                'label' => __('Completed only'),
+                'value' => Order::STATE_COMPLETE,
             ]
         ];
     }

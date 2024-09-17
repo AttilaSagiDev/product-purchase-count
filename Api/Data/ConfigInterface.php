@@ -32,10 +32,21 @@ interface ConfigInterface
         'product_purchase_count/product_purchase_count_display/extended_notification_text';
 
     /**
-     * Extended notification config path
+     * Notification position config path
      */
     public const XML_PATH_NOTIFICATION_POSITION =
         'product_purchase_count/product_purchase_count_display/notification_position';
+
+    /**
+     * Order state config path
+     */
+    public const XML_PATH_STATE = 'product_purchase_count/product_purchase_count_orders_settings/state';
+
+    /**
+     * Order state config path
+     */
+    public const XML_PATH_MAXIMUM_ORDERS =
+        'product_purchase_count/product_purchase_count_orders_settings/maximum_orders';
 
     /**
      * Check if product purchase count module is enabled
@@ -64,4 +75,18 @@ interface ConfigInterface
      * @return string
      */
     public function getNotificationPosition(): string;
+
+    /**
+     * Get orders state
+     *
+     * @return string
+     */
+    public function getOrdersState(): string;
+
+    /**
+     * Get maximum orders
+     *
+     * @return int
+     */
+    public function getMaximumOrders(): int;
 }

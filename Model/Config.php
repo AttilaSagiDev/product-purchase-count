@@ -89,4 +89,30 @@ class Config implements ConfigInterface
             ScopeInterface::SCOPE_WEBSITE
         );
     }
+
+    /**
+     * Get orders state
+     *
+     * @return string
+     */
+    public function getOrdersState(): string
+    {
+        return $this->scopeConfig->getValue(
+            ConfigInterface::XML_PATH_STATE,
+            ScopeInterface::SCOPE_WEBSITE
+        );
+    }
+
+    /**
+     * Get maximum orders
+     *
+     * @return int
+     */
+    public function getMaximumOrders(): int
+    {
+        return (int)$this->scopeConfig->getValue(
+            ConfigInterface::XML_PATH_MAXIMUM_ORDERS,
+            ScopeInterface::SCOPE_WEBSITE
+        );
+    }
 }
