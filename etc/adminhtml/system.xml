@@ -40,7 +40,7 @@
                     <label>Notification Text</label>
                     <validate>required-entry</validate>
                     <comment>
-                        <![CDATA[The notification text which will be displayed. Please note that the "%c" will be replaced with the count value, so you have to add it in the proper place within the text. You can use only <strong> HTML tag.]]>
+                        <![CDATA[The notification text which will be displayed. Please note that the "%c" will be replaced with the count value, so you have to add it in the proper place within the text. You can use only strong HTML tag.]]>
                     </comment>
                     <depends>
                         <field id="*/product_purchase_count_display/interval">3</field>
@@ -51,7 +51,7 @@
                     <label>Notification Text</label>
                     <validate>required-entry</validate>
                     <comment>
-                        <![CDATA[The notification text which will be displayed. Please note that the "%c" will be replaced with the count value, so you have to add it in the proper place within the text. You can use only <strong> HTML tag.]]>
+                        <![CDATA[The notification text which will be displayed. Please note that the "%c" will be replaced with the count value, so you have to add it in the proper place within the text. You can use only strong HTML tag.]]>
                     </comment>
                     <depends>
                         <field id="*/product_purchase_count_display/interval">7</field>

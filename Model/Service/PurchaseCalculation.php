@@ -109,8 +109,6 @@ class PurchaseCalculation implements PurchaseCalculationInterface
     {
         $productPurchaseCount = $this->productPurchaseCountFactory->create();
         try {
-            $timeStart = microtime(true);
-
             $storeId = (int)$this->storeManager->getStore()->getId();
             $endDate = $this->dateTime->date(StdlibDateTime::DATE_PHP_FORMAT . ' 23:59:59');
             $startDate = $this->dateTime->date(
@@ -186,6 +184,7 @@ class PurchaseCalculation implements PurchaseCalculationInterface
             ->where(OrderItemInterface::STORE_ID . ' = ?', $storeId)
             ->where(OrderItemInterface::CREATED_AT . ' >= ?', $startDate)
             ->where(OrderItemInterface::CREATED_AT . ' <= ?', $endDate)
+            ->order(OrderItemInterface::CREATED_AT . ' DESC')
             ->limit($this->config->getMaximumOrders());
 
         return $connection->fetchCol($select);
@@ -199,11 +198,15 @@ class PurchaseCalculation implements PurchaseCalculationInterface
      */
     private function convertNotificationText(int $orderCount): string
     {
-        $notificationText = str_replace('%c', (string)$orderCount, $this->config->getNotificationText());
-        if ($orderCount === 1) {
-            $notificationText = str_replace('customers', 'customer', $notificationText);
+        if ($orderCount > 0) {
+            $notificationText = str_replace('%c', (string)$orderCount, $this->config->getNotificationText());
+            if ($orderCount === 1) {
+                $notificationText = str_replace('customers', 'customer', $notificationText);
+            }
+
+            return $this->escaper->escapeHtml($notificationText, ['strong']);
         }
 
-        return $this->escaper->escapeHtml($notificationText, ['strong']);
+        return '';
     }
 }
