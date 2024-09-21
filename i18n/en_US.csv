@@ -1,0 +1,24 @@
+"Last 3 days","Last 3 days"
+"Last week (7 days)","Last week (7 days)"
+"After Product Info","After Product Info"
+"After Media Gallery","After Media Gallery"
+"All order states","All order states"
+"Completed only","Completed only"
+"Product Purchase Count Section","Product Purchase Count Section"
+"Space Extensions","Space Extensions"
+"Product Purchase Count","Product Purchase Count"
+Configuration,Configuration
+"Enable Extension","Enable Extension"
+"Enable extension.","Enable extension."
+Display,Display
+Interval,Interval
+"Please select interval.","Please select interval."
+"Notification Text","Notification Text"
+"The notification text will be displayed. Please note that the ""%c"" will be replaced with the count value, so you have to add it in the proper place within the text. You can use only strong HTML tag.","The notification text will be displayed. Please note that the ""%c"" will be replaced with the count value, so you have to add it in the proper place within the text. You can use only strong HTML tag."
+"Display Position","Display Position"
+"Please select where to display the notification on the product view page.","Please select where to display the notification on the product view page."
+"Orders Settings","Orders Settings"
+State,State
+"Please select order state for calculation.","Please select order state for calculation."
+"Maximum Orders","Maximum Orders"
+"Please select the maximum order value for calculation. This must be between 10 and 300.","Please select the maximum order value for calculation. This must be between 10 and 300."

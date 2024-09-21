@@ -40,7 +40,7 @@
                     <label>Notification Text</label>
                     <validate>required-entry</validate>
                     <comment>
-                        <![CDATA[The notification text which will be displayed. Please note that the "%c" will be replaced with the count value, so you have to add it in the proper place within the text. You can use only strong HTML tag.]]>
+                        <![CDATA[The notification text will be displayed. Please note that the "%c" will be replaced with the count value, so you have to add it in the proper place within the text. You can use only strong HTML tag.]]>
                     </comment>
                     <depends>
                         <field id="*/product_purchase_count_display/interval">3</field>
@@ -51,7 +51,7 @@
                     <label>Notification Text</label>
                     <validate>required-entry</validate>
                     <comment>
-                        <![CDATA[The notification text which will be displayed. Please note that the "%c" will be replaced with the count value, so you have to add it in the proper place within the text. You can use only strong HTML tag.]]>
+                        <![CDATA[The notification text will be displayed. Please note that the "%c" will be replaced with the count value, so you have to add it in the proper place within the text. You can use only strong HTML tag.]]>
                     </comment>
                     <depends>
                         <field id="*/product_purchase_count_display/interval">7</field>
@@ -77,7 +77,7 @@
                        showInDefault="1" showInWebsite="1" showInStore="0" canRestore="1">
                     <label>Maximum Orders</label>
                     <validate>required-entry validate-digits validate-digits-range digits-range-10-300</validate>
-                    <comment>Please select maximum orders value for calculation. This must be between 10 and 300.</comment>
+                    <comment>Please select the maximum order value for calculation. This must be between 10 and 300.</comment>
                 </field>
             </group>
         </section>
