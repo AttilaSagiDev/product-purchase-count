@@ -1,0 +1,49 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright (c) 2024 Attila Sagi
+ * @license http://www.opensource.org/licenses/mit-license.html  MIT License
+ */
+-->
+<page layout="1column" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <body>
+        <referenceContainer name="product.info.main">
+            <block name="space.product.purchase.count.main"
+                template="Space_ProductPurchaseCount::catalog/view/product-purchase-count.phtml"
+                after="-"
+                ifconfig="product_purchase_count/product_purchase_count_config/enabled">
+                <arguments>
+                    <argument name="view_model" xsi:type="object">
+                        Space\ProductPurchaseCount\ViewModel\Catalog\View\Count
+                    </argument>
+                    <argument name="position" xsi:type="string">product.info.main</argument>
+                </arguments>
+            </block>
+        </referenceContainer>
+        <referenceContainer name="product.info.media">
+            <block name="space.product.purchase.count.gallery"
+                   template="Space_ProductPurchaseCount::catalog/view/product-purchase-count.phtml"
+                   after="-"
+                   ifconfig="product_purchase_count/product_purchase_count_config/enabled">
+                <arguments>
+                    <argument name="view_model" xsi:type="object">
+                        Space\ProductPurchaseCount\ViewModel\Catalog\View\Count
+                    </argument>
+                    <argument name="position" xsi:type="string">product.info.media</argument>
+                </arguments>
+            </block>
+        </referenceContainer>
+        <referenceContainer name="before.body.end">
+            <block name="space.product.purchase.count.script"
+                   template="Space_ProductPurchaseCount::catalog/view/script/script.phtml"
+                   ifconfig="product_purchase_count/product_purchase_count_config/enabled">
+                <arguments>
+                    <argument name="view_model" xsi:type="object">
+                        Space\ProductPurchaseCount\ViewModel\Catalog\View\Count
+                    </argument>
+                </arguments>
+            </block>
+        </referenceContainer>
+    </body>
+</page>

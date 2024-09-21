@@ -1,0 +1,17 @@
+<?php
+/**
+ * Copyright (c) 2024 Attila Sagi
+ * @license http://www.opensource.org/licenses/mit-license.html  MIT License
+ */
+
+/**
+ * @var $block \Magento\Framework\View\Element\Template
+ * @var $viewModel \Space\ProductPurchaseCount\ViewModel\Catalog\View\Count
+ */
+
+$viewModel = $block->getData('view_model');
+$position = $block->getData('position');
+?>
+<?php if (null !== $viewModel && null !== $position && $position === $viewModel->getPositionToShow()): ?>
+    <div id="product-purchase-count" class="no-display"></div>
+<?php endif; ?>

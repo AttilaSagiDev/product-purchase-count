@@ -1,0 +1,85 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright (c) 2024 Attila Sagi
+ * @license http://www.opensource.org/licenses/mit-license.html  MIT License
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
+    <system>
+        <tab id="space_tab" translate="label" sortOrder="500">
+            <label>Space Extensions</label>
+        </tab>
+        <section id="product_purchase_count" translate="label" type="text" sortOrder="100"
+                 showInDefault="1" showInWebsite="1" showInStore="1">
+            <label>Product Purchase Count</label>
+            <tab>space_tab</tab>
+            <resource>Space_ProductPurchaseCount::product_purchase_count</resource>
+            <group id="product_purchase_count_config" translate="label" type="text" sortOrder="10"
+                   showInDefault="1" showInWebsite="1" showInStore="0">
+                <label>Configuration</label>
+                <field id="enabled" translate="label comment" type="select" sortOrder="10" showInDefault="1"
+                       showInWebsite="1" showInStore="0" canRestore="1">
+                    <label>Enable Extension</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>Enable extension.</comment>
+                </field>
+            </group>
+            <group id="product_purchase_count_display" translate="label" type="text" sortOrder="20"
+                   showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>Display</label>
+                <field id="interval" translate="label comment" type="select" sortOrder="10"
+                       showInDefault="1" showInWebsite="1" showInStore="0" canRestore="1">
+                    <label>Interval</label>
+                    <source_model>Space\ProductPurchaseCount\Model\Config\Source\Interval</source_model>
+                    <comment>Please select interval.</comment>
+                </field>
+                <field id="notification_text" translate="label comment" type="text" sortOrder="20"
+                       showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                    <label>Notification Text</label>
+                    <validate>required-entry</validate>
+                    <comment>
+                        <![CDATA[The notification text will be displayed. Please note that the "%c" will be replaced with the count value, so you have to add it in the proper place within the text. You can use only strong HTML tag.]]>
+                    </comment>
+                    <depends>
+                        <field id="*/product_purchase_count_display/interval">3</field>
+                    </depends>
+                </field>
+                <field id="extended_notification_text" translate="label comment" type="text" sortOrder="30"
+                       showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                    <label>Notification Text</label>
+                    <validate>required-entry</validate>
+                    <comment>
+                        <![CDATA[The notification text will be displayed. Please note that the "%c" will be replaced with the count value, so you have to add it in the proper place within the text. You can use only strong HTML tag.]]>
+                    </comment>
+                    <depends>
+                        <field id="*/product_purchase_count_display/interval">7</field>
+                    </depends>
+                </field>
+                <field id="notification_position" translate="label comment" type="select" sortOrder="40"
+                       showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                    <label>Display Position</label>
+                    <source_model>Space\ProductPurchaseCount\Model\Config\Source\NotificationPosition</source_model>
+                    <comment>Please select where to display the notification on the product view page.</comment>
+                </field>
+            </group>
+            <group id="product_purchase_count_orders_settings" translate="label" type="text" sortOrder="30"
+                   showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>Orders Settings</label>
+                <field id="state" translate="label comment" type="select" sortOrder="10"
+                       showInDefault="1" showInWebsite="1" showInStore="0" canRestore="1">
+                    <label>State</label>
+                    <source_model>Space\ProductPurchaseCount\Model\Config\Source\OrderSates</source_model>
+                    <comment>Please select order state for calculation.</comment>
+                </field>
+                <field id="maximum_orders" translate="label comment" type="text" sortOrder="20"
+                       showInDefault="1" showInWebsite="1" showInStore="0" canRestore="1">
+                    <label>Maximum Orders</label>
+                    <validate>required-entry validate-digits validate-digits-range digits-range-10-300</validate>
+                    <comment>Please select the maximum order value for calculation. This must be between 10 and 300.</comment>
+                </field>
+            </group>
+        </section>
+    </system>
+</config>

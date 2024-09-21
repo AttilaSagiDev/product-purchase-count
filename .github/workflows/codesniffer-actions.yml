@@ -1,0 +1,46 @@
+name: Magento 2 Coding Standard
+run-name: Code Sniffer Testing Action
+on:
+  pull_request:
+    branches:
+      - main
+      - develop
+  push:
+    branches:
+      - main
+      - develop
+jobs:
+  Code-Sniffer-Action:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "The job was automatically triggered by a ${{ github.event_name }} event."
+      - run: echo "This job is now running on a ${{ runner.os }} server hosted by GitHub!"
+      - run: echo "The name of your branch is ${{ github.ref }} and your repository is ${{ github.repository }}."
+      - name: Check out repository code
+        uses: actions/checkout@v4
+      - run: echo "The ${{ github.repository }} repository has been cloned to the runner."
+      - run: echo "The workflow is now ready to test your code on the runner."
+      - name: Setup PHP 8.3
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: 8.3
+      - name: Show PHP version
+        run: |
+          php -v
+      - name: Checkout Magento Coding Standard
+        uses: actions/checkout@v4
+        with:
+          repository: magento/magento-coding-standard
+          path: './magento-coding-standard'
+      - name: Install Magento Coding Standard
+        run: |
+          cd magento-coding-standard
+          composer install
+      - name: Show PHPCS information
+        run: |
+          cd magento-coding-standard
+          vendor/bin/phpcs -i
+      - name: Run Magento Code Sniffer
+        run: |
+          magento-coding-standard/vendor/bin/phpcs --standard=Magento2 ${{ github.workspace }} --extensions=php,js,phtml,html,xml,less --ignore=*/magento-coding-standard/*
+      - run: echo "This job's status is ${{ job.status }}."

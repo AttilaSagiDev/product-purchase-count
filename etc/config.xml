@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright (c) 2024 Attila Sagi
+ * @license http://www.opensource.org/licenses/mit-license.html  MIT License
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Store:etc/config.xsd">
+    <default>
+        <product_purchase_count>
+            <product_purchase_count_config>
+                <enabled>0</enabled>
+            </product_purchase_count_config>
+            <product_purchase_count_display>
+                <interval>3</interval>
+                <notification_text>
+                    <![CDATA[<strong>%c customers</strong> purchased this product in the last 3 days.]]>
+                </notification_text>
+                <extended_notification_text>
+                    <![CDATA[<strong>%c customers</strong> purchased this product in the last 7 days.]]>
+                </extended_notification_text>
+                <notification_position>product.info.main</notification_position>
+            </product_purchase_count_display>
+            <product_purchase_count_orders_settings>
+                <state>all</state>
+                <maximum_orders>150</maximum_orders>
+            </product_purchase_count_orders_settings>
+        </product_purchase_count>
+    </default>
+</config>

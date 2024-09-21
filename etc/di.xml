@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright (c) 2024 Attila Sagi
+ * @license http://www.opensource.org/licenses/mit-license.html  MIT License
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <preference for="Space\ProductPurchaseCount\Api\Data\ConfigInterface"
+                type="Space\ProductPurchaseCount\Model\Config" />
+    <preference for="Space\ProductPurchaseCount\Api\Data\ProductPurchaseCountInterface"
+                type="Space\ProductPurchaseCount\Model\ProductPurchaseCount" />
+    <preference for="Space\ProductPurchaseCount\Api\PurchaseCalculationInterface"
+                type="Space\ProductPurchaseCount\Model\Service\PurchaseCalculation" />
+</config>
