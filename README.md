@@ -65,6 +65,13 @@ Maximum Orders: Please select the maximum order value for calculation. This must
 
 ## Change Log ##
 
+Version 1.0.2 - Oct 4, 2024
+- Update read me
+
+Version 1.0.1 - Oct 2, 2024
+- Fix mobile view
+- Fix js path
+
 Version 1.0.0 - Sep 21, 2024
 - Compatibility with Magento Community Edition 2.4.x
 - Compatibility with Adobe Commerce 2.4.x
