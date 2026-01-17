@@ -1,14 +1,19 @@
 <?php
+/**
+ * Copyright (c) 2024 Attila Sagi
+ * @license http://www.opensource.org/licenses/mit-license.html  MIT License
+ */
+
 declare(strict_types=1);
 
 namespace Space\ProductPurchaseCount\Test\Unit\Model;
 
-use PHPUnit\Framework\TestCase;
-use PHPUnit\Framework\MockObject\MockObject;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Store\Model\ScopeInterface;
-use Space\ProductPurchaseCount\Model\Config;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 use Space\ProductPurchaseCount\Api\Data\ConfigInterface;
+use Space\ProductPurchaseCount\Model\Config;
 use Space\ProductPurchaseCount\Model\Config\Source\Interval;
 
 class ConfigTest extends TestCase
@@ -16,7 +21,7 @@ class ConfigTest extends TestCase
     /**
      * @var ScopeConfigInterface|MockObject
      */
-    private MockObject|ScopeConfigInterface $scopeConfigMock;
+    private ScopeConfigInterface|MockObject $scopeConfigMock;
 
     /**
      * @var Config
@@ -25,94 +30,118 @@ class ConfigTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->scopeConfigMock = $this->createMock(ScopeConfigInterface::class);
+        $this->scopeConfigMock = $this->getMockBuilder(ScopeConfigInterface::class)
+            ->getMockForAbstractClass();
+
         $this->model = new Config($this->scopeConfigMock);
     }
 
-    public function testIsEnabledReturnsTrue()
+    public function testIsEnabled(): void
     {
         $this->scopeConfigMock->expects($this->once())
             ->method('isSetFlag')
-            ->with(ConfigInterface::XML_PATH_ENABLED, ScopeInterface::SCOPE_WEBSITE)
+            ->with(
+                ConfigInterface::XML_PATH_ENABLED,
+                ScopeInterface::SCOPE_WEBSITE
+            )
             ->willReturn(true);
 
         $this->assertTrue($this->model->isEnabled());
     }
 
-    public function testGetIntervalReturnsInt()
+    public function testGetInterval(): void
     {
         $this->scopeConfigMock->expects($this->once())
             ->method('getValue')
-            ->with(ConfigInterface::XML_PATH_INTERVAL, ScopeInterface::SCOPE_WEBSITE)
-            ->willReturn("7");
+            ->with(
+                ConfigInterface::XML_PATH_INTERVAL,
+                ScopeInterface::SCOPE_WEBSITE
+            )
+            ->willReturn(Interval::LAST_THREE_DAYS);
 
-        $this->assertEquals(7, $this->model->getInterval());
+        $this->assertEquals(Interval::LAST_THREE_DAYS, $this->model->getInterval());
     }
 
-    /**
-     * Fixed using willReturnCallback to handle multiple calls without withConsecutive
-     */
-    public function testGetNotificationTextReturnsStandardTextWhenIntervalIsThreeDays()
+    public function testGetNotificationTextForLastThreeDays(): void
     {
         $this->scopeConfigMock->expects($this->exactly(2))
             ->method('getValue')
-            ->willReturnCallback(function ($path, $scope) {
-                if ($path === ConfigInterface::XML_PATH_INTERVAL) {
-                    return Interval::LAST_THREE_DAYS;
-                }
-                if ($path === ConfigInterface::XML_PATH_NOTIFICATION_TEXT) {
-                    return "Ordered in the last 3 days";
-                }
-                return null;
-            });
+            ->willReturnMap([
+                [
+                    ConfigInterface::XML_PATH_INTERVAL,
+                    ScopeInterface::SCOPE_WEBSITE,
+                    null,
+                    Interval::LAST_THREE_DAYS
+                ],
+                [
+                    ConfigInterface::XML_PATH_NOTIFICATION_TEXT,
+                    ScopeInterface::SCOPE_WEBSITE,
+                    null,
+                    'Notification Text'
+                ]
+            ]);
 
-        $this->assertEquals("Ordered in the last 3 days", $this->model->getNotificationText());
+        $this->assertEquals('Notification Text', $this->model->getNotificationText());
     }
 
-    public function testGetNotificationTextReturnsExtendedTextWhenIntervalIsNotThreeDays()
+    public function testGetNotificationTextForExtendedInterval(): void
     {
         $this->scopeConfigMock->expects($this->exactly(2))
             ->method('getValue')
-            ->willReturnCallback(function ($path, $scope) {
-                if ($path === ConfigInterface::XML_PATH_INTERVAL) {
-                    return 99; // Not 3 days
-                }
-                if ($path === ConfigInterface::XML_PATH_EXTENDED_NOTIFICATION_TEXT) {
-                    return "Ordered recently";
-                }
-                return null;
-            });
+            ->willReturnMap([
+                [
+                    ConfigInterface::XML_PATH_INTERVAL,
+                    ScopeInterface::SCOPE_WEBSITE,
+                    null,
+                    Interval::LAST_WEEK
+                ],
+                [
+                    ConfigInterface::XML_PATH_EXTENDED_NOTIFICATION_TEXT,
+                    ScopeInterface::SCOPE_WEBSITE,
+                    null,
+                    'Extended Notification Text'
+                ]
+            ]);
 
-        $this->assertEquals("Ordered recently", $this->model->getNotificationText());
+        $this->assertEquals('Extended Notification Text', $this->model->getNotificationText());
     }
 
-    public function testGetNotificationPosition()
+    public function testGetNotificationPosition(): void
     {
         $this->scopeConfigMock->expects($this->once())
             ->method('getValue')
-            ->with(ConfigInterface::XML_PATH_NOTIFICATION_POSITION, ScopeInterface::SCOPE_WEBSITE)
-            ->willReturn('top-right');
+            ->with(
+                ConfigInterface::XML_PATH_NOTIFICATION_POSITION,
+                ScopeInterface::SCOPE_WEBSITE
+            )
+            ->willReturn('top');
 
-        $this->assertEquals('top-right', $this->model->getNotificationPosition());
+        $this->assertEquals('top', $this->model->getNotificationPosition());
     }
 
-    public function testGetOrdersState()
+    public function testGetOrdersState(): void
     {
         $this->scopeConfigMock->expects($this->once())
             ->method('getValue')
-            ->with(ConfigInterface::XML_PATH_STATE, ScopeInterface::SCOPE_WEBSITE)
+            ->with(
+                ConfigInterface::XML_PATH_STATE,
+                ScopeInterface::SCOPE_WEBSITE
+            )
             ->willReturn('processing');
 
         $this->assertEquals('processing', $this->model->getOrdersState());
     }
 
-    public function testGetMaximumOrders()
+    public function testGetMaximumOrders(): void
     {
         $this->scopeConfigMock->expects($this->once())
             ->method('getValue')
-            ->with(ConfigInterface::XML_PATH_MAXIMUM_ORDERS, ScopeInterface::SCOPE_WEBSITE)
-            ->willReturn("50");
+            ->with(
+                ConfigInterface::XML_PATH_MAXIMUM_ORDERS,
+                ScopeInterface::SCOPE_WEBSITE
+            )
+            ->willReturn(10);
 
-        $this->assertEquals(50, $this->model->getMaximumOrders());
+        $this->assertEquals(10, $this->model->getMaximumOrders());
     }
 }
