@@ -121,7 +121,8 @@ class PurchaseCalculationTest extends TestCase
         $this->configMock->expects($this->once())->method('getInterval')->willReturn($interval);
         $this->configMock->expects($this->once())->method('getMaximumOrders')->willReturn(10);
         $this->configMock->expects($this->once())->method('getOrdersState')->willReturn(OrderSates::ALL);
-        $this->configMock->expects($this->once())->method('getNotificationText')->willReturn('%c customers bought this product');
+        $this->configMock->expects($this->once())
+            ->method('getNotificationText')->willReturn('%c customers bought this product');
 
         $connectionMock = $this->createMock(AdapterInterface::class);
         $selectMock = $this->createMock(Select::class);
