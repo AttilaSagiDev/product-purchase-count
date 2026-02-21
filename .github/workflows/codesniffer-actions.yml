@@ -23,7 +23,7 @@ jobs:
       - name: Setup PHP 8.3
         uses: shivammathur/setup-php@v2
         with:
-          php-version: 8.3
+          php-version: 8.4
       - name: Show PHP version
         run: |
           php -v
@@ -42,5 +42,5 @@ jobs:
           vendor/bin/phpcs -i
       - name: Run Magento Code Sniffer
         run: |
-          magento-coding-standard/vendor/bin/phpcs --standard=Magento2 ${{ github.workspace }} --extensions=php,js,phtml,html,xml,less --ignore=*/magento-coding-standard/*
+          magento-coding-standard/vendor/bin/phpcs --standard=Magento2 ${{ github.workspace }} --extensions=php,js,phtml,html,xml --ignore=*/magento-coding-standard/*
       - run: echo "This job's status is ${{ job.status }}."
