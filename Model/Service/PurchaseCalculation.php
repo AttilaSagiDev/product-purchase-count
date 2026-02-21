@@ -79,7 +79,7 @@ class PurchaseCalculation implements PurchaseCalculationInterface
      * @param Escaper $escaper
      * @param LoggerInterface $logger
      */
-    public function __construct(
+    public function __construct(//NOSONAR
         ProductPurchaseCountInterfaceFactory $productPurchaseCountFactory,
         StoreManagerInterface $storeManager,
         ResourceItem $resourceItem,

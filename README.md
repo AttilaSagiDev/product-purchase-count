@@ -65,8 +65,12 @@ Maximum Orders: Please select the maximum order value for calculation. This must
 
 ## Change Log ##
 
+Version 1.0.3 - Feb 21, 2026
+- Add unit tests
+- PHP 8.4 upgrades
+
 Version 1.0.2 - Oct 4, 2024
-- Update read me
+- Update readme
 
 Version 1.0.1 - Oct 2, 2024
 - Fix mobile view

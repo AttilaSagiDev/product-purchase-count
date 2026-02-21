@@ -4,10 +4,14 @@
  * @license http://www.opensource.org/licenses/mit-license.html  MIT License
  */
 
+use Magento\Framework\Escaper;
+use Magento\Framework\View\Element\Template;
+use Space\ProductPurchaseCount\ViewModel\Catalog\View\Count;
+
 /**
- * @var $block \Magento\Framework\View\Element\Template
- * @var $escaper \Magento\Framework\Escaper
- * @var $viewModel \Space\ProductPurchaseCount\ViewModel\Catalog\View\Count
+ * @var $block Template
+ * @var $escaper Escaper
+ * @var $viewModel Count
  */
 
 $viewModel = $block->getData('view_model');
